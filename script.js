@@ -3,29 +3,38 @@ var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
 var hash_object = {
   start: null,
   end: null,
-  setStart: function(lon,lat) {
+  setStart: function(lon, lat) {
     this.start = lon + "," + lat
   },
-  setEnd: function(lon,lat) {
-    this.start = lon + "," + lat
+  setEnd: function(lon, lat) {
+    this.end = lon + "," + lat
   },
   getURLHash: function() {
-
+    this.start = this.getHashValue("start");
+    this.end = this.getHashValue("end");
   },
   setURLHash: function() {
     values = []
     sep1 = ";"
     sep2 = "="
 
-    if (this.start) != null  {
+    if (this.start != null)  {
       values.push(["start", this.start].join(sep2))
     }
-    if (this.end) != null  {
+    if (this.end != null)  {
       values.push(["end", this.end])
     }
 
     hash = values.join(sep1)
     document.location.hash = hash
+  },
+  getHashValue: function(key) {
+    var matches = location.hash.match(new RegExp(key+"=([^;]*)"));
+    return matches ? matches[1] : null;
+  },
+  logPoints: function() {
+    console.log(this.start);
+    console.log(this.end);
   }
 }
 
@@ -56,8 +65,6 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
       
       var lonlat = map.getLonLatFromPixel(e.xy);
       
-      console.log(lonlat);
-      
       lonlat.transform(proj_sphmer, proj_wgs84);
 
       start_lon = Number((lonlat.lon).toFixed(5))
@@ -65,41 +72,15 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
 
       hash_object.setStart(start_lon, start_lat)
       hash_object.setURLHash()
+
+      hash_object.logPoints()
   }
 
 });
 
-// 'hash' for anchor portion of url instead of 'search' for query portion. See http://www.w3schools.com/jsref/obj_location.asp
-function setHashValue(key, value) {
+function init_map() {
 
-  if (getHashValue(key) != null) {
-    updateHashValue(key, value)
-    console.log("Replacing hash value")          
-  }
-  else {
-    addHashValue(key, value)
-    console.log("Adding hash value")
-  }
-  
-}
-function getHashValue(key) {
-    var matches = location.hash.match(new RegExp(key+"=([^;]*)"));
-    return matches ? matches[1] : null;
-  }
-function addHashValue(key, value) {
-  var hash = location.hash;
-  hash += (";" + key + "=" + value)
-  document.location.hash = hash
-}
-function updateHashValue(key, value) {
-  var hash = document.location.hash;
-  hash = hash.replace(new RegExp(key + "=([^;]*)"), key + "=" + value)
-  document.location.hash = hash
-}
-
-function init() {
-
-  hash_object.getURLHash()
+  init_points();
 
   map = new OpenLayers.Map("basicMap");
   var mapnik = new OpenLayers.Layer.OSM();
@@ -112,6 +93,11 @@ function init() {
   var click = new OpenLayers.Control.Click();
   map.addControl(click);
   click.activate();
+}
+
+function init_points() {
+  hash_object.getURLHash()
+  hash_object.logPoints()
 }
 
 function foo() {
