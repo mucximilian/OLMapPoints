@@ -142,7 +142,7 @@ var point_end
 function init_map() {
 
   // Set up map
-  map = new OpenLayers.Map("basicMap");
+  map = new OpenLayers.Map("map");
 
   var position = new OpenLayers.LonLat(11.51,48.12).transform(proj_wgs84, 
     proj_sphmer);
