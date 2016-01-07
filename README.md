@@ -7,7 +7,9 @@ The *index.html* file can be tested here:
 
 An example for an added hash property at the URL anchor looks like this:
 
-   https://cdn.rawgit.com/mucximilian/OLMapPoints/master/index.html#start=11.57557,48.13717
+https://cdn.rawgit.com/mucximilian/OLMapPoints/master/index.html#start=11.57557,48.13717
+
+   code
 
 ## TO DOs:
 * Adding more points to the URL anchor (i.e. start point, end point and an arbitrary number of points in between)
