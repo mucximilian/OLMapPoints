@@ -1,7 +1,7 @@
 # OLMapPoints
 A simple OpenLayers web mapping application that allows the user to add points which can then be shared via the URL. Currently only one point can be added by clicking on the map. The hash property with the anchor part of the URL updates itself dynamically to allow the sharing of a LatLon location. See [here](http://www.w3schools.com/jsref/obj_location.asp) for more information about the URL anchor/hash part.
 
-The *index.html* file can be tested here:
+The *index.html* file can be tested using [RawGit](https://cdn.rawgit.com/mucximilian/OLMapPoints/master/index.html):
 
     https://cdn.rawgit.com/mucximilian/OLMapPoints/master/index.html
 
