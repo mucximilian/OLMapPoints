@@ -1,18 +1,17 @@
 var map;
 
+// Point style definitions
 var point_style_start = {
     externalGraphic: 'img/arrow.png',
     graphicHeight: 32,
     graphicWidth: 32,
     graphicYOffset: -32
 };
-
 var point_style_end = {
     externalGraphic: 'img/cross.png',
     graphicHeight: 32,
     graphicWidth: 32
 };
-
 var style_point_start = new OpenLayers.StyleMap({
     "default": point_style_start,
     "select": point_style_start,
@@ -20,7 +19,6 @@ var style_point_start = new OpenLayers.StyleMap({
 }, {
     extendDefault: false
 });
-
 var style_point_end = new OpenLayers.StyleMap({
     "default": point_style_end,
     "select": point_style_end,
@@ -29,14 +27,16 @@ var style_point_end = new OpenLayers.StyleMap({
     extendDefault: false
 });
 
-// Projections
+// Used projections
 var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
 var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
 
-// Stores the anchor part of the URL as a custom object
+// Manage the anchor part of the URL with a custom object
 var hash_object = {
   start: null,
   end: null,
+  // Get the start and end hash values from the anchor string as transformed
+  // LonLat coordinates
   getURLHash: function() {
     start = this.getHashValue("start");
     end = this.getHashValue("end");
@@ -48,6 +48,23 @@ var hash_object = {
       this.end = this.getLatLonFromStrings(end);
     }
   },
+  // Get the desired hash value by its key as a simple string
+  getHashValue: function(key) {
+    var matches = location.hash.match(new RegExp(key+"=([^;]*)"));
+    return matches ? matches[1] : null;
+  },
+  // Splits a string with a coordinate pair and returns it as LonLat
+  getLatLonFromStrings: function(coords) {
+    coords = coords.split(",");
+    lonlat = new OpenLayers.LonLat(
+        parseFloat(coords[0]),
+        parseFloat(coords[1])
+      )
+
+    return lonlat.transform(proj_wgs84, proj_sphmer);
+  },
+  // Set the start and end hash values in the anchor string from transformed
+  // LonLat coordinates
   setURLHash: function() {
     values = []
     sep1 = ";"
@@ -66,20 +83,7 @@ var hash_object = {
     hash = values.join(sep1)
     document.location.hash = hash
   },
-  getHashValue: function(key) {
-    var matches = location.hash.match(new RegExp(key+"=([^;]*)"));
-
-    return matches ? matches[1] : null;
-  },
-  getLatLonFromStrings: function(coords) {
-    coords = coords.split(",");
-    lonlat = new OpenLayers.LonLat(
-        parseFloat(coords[0]),
-        parseFloat(coords[1])
-      )
-
-    return lonlat.transform(proj_wgs84, proj_sphmer);
-  },
+  // Transforms and combines the coordinates of a LatLon in a truncated string
   getLatLonString: function(point) {
 
     lonlat = point.clone();
@@ -93,8 +97,7 @@ var hash_object = {
     return point_string;
   },
   logPoints: function() {
-    console.log(this.start);
-    console.log(this.end);
+    console.log("start = " + this.start + "; end = " + this.end);
   }
 }
 
@@ -180,7 +183,7 @@ function init_points() {
   console.log("init points")
 
   hash_object.getURLHash()
-  //hash_object.logPoints()
+  hash_object.logPoints()
 
   // TO DO:
   // Create function for true cases
