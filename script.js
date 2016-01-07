@@ -1,103 +1,119 @@
 var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
-      var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
-      var hash_object = {
-        start: null,
-        end: null,
-        setHash: function() {}
-      }
+var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
+var hash_object = {
+  start: null,
+  end: null,
+  setStart: function(lon,lat) {
+    this.start = lon + "," + lat
+  },
+  setEnd: function(lon,lat) {
+    this.start = lon + "," + lat
+  },
+  getURLHash: function() {
 
-      OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
-        defaultHandlerOptions: {
-            'single': true,
-            'double': false,
-            'pixelTolerance': 0,
-            'stopSingle': false,
-            'stopDouble': false
-        },
+  },
+  setURLHash: function() {
+    values = []
+    sep1 = ";"
+    sep2 = "="
 
-        initialize: function(options) {
-            this.handlerOptions = OpenLayers.Util.extend(
-                {}, this.defaultHandlerOptions
-            );
-            OpenLayers.Control.prototype.initialize.apply(
-                this, arguments
-            ); 
-            this.handler = new OpenLayers.Handler.Click(
-                this, {
-                    'click': this.trigger
-                }, this.handlerOptions
-            );
-        }, 
+    if (this.start) != null  {
+      values.push(["start", this.start].join(sep2))
+    }
+    if (this.end) != null  {
+      values.push(["end", this.end])
+    }
 
-        trigger: function(e) {
-            
-            var lonlat = map.getLonLatFromPixel(e.xy);
-            
-            console.log(lonlat);
-            
-            lonlat.transform(proj_sphmer, proj_wgs84);
+    hash = values.join(sep1)
+    document.location.hash = hash
+  }
+}
 
-            start_lon = Number((lonlat.lon).toFixed(5))
-            start_lat = Number((lonlat.lat).toFixed(5))
+OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
+  defaultHandlerOptions: {
+      'single': true,
+      'double': false,
+      'pixelTolerance': 0,
+      'stopSingle': false,
+      'stopDouble': false
+  },
 
-            var point_start = start_lon + "," +  start_lat
-            
-            setHashValue('start', point_start)
+  initialize: function(options) {
+      this.handlerOptions = OpenLayers.Util.extend(
+          {}, this.defaultHandlerOptions
+      );
+      OpenLayers.Control.prototype.initialize.apply(
+          this, arguments
+      ); 
+      this.handler = new OpenLayers.Handler.Click(
+          this, {
+              'click': this.trigger
+          }, this.handlerOptions
+      );
+  }, 
 
-            console.log(location.hash)
-        }
+  trigger: function(e) {
+      
+      var lonlat = map.getLonLatFromPixel(e.xy);
+      
+      console.log(lonlat);
+      
+      lonlat.transform(proj_sphmer, proj_wgs84);
 
-      });
+      start_lon = Number((lonlat.lon).toFixed(5))
+      start_lat = Number((lonlat.lat).toFixed(5))
 
-      // 'hash' for anchor portion of url instead of 'search' for query portion. See http://www.w3schools.com/jsref/obj_location.asp
-      function setHashValue(key, value) {
+      hash_object.setStart(start_lon, start_lat)
+      hash_object.setURLHash()
+  }
 
-        if (getHashValue(key) != null) {
-          updateHashValue(key, value)
-          console.log("Replacing hash value")          
-        }
-        else {
-          addHashValue(key, value)
-          console.log("Adding hash value")
-        }
-        
-      }
-      function getHashValue(key) {
-          var matches = location.hash.match(new RegExp(key+"=([^;]*)"));
-          return matches ? matches[1] : null;
-        }
-      function addHashValue(key, value) {
-        var hash = location.hash;
-        hash += (";" + key + "=" + value)
-        document.location.hash = hash
-      }
-      function updateHashValue(key, value) {
-        var hash = document.location.hash;
-        hash = hash.replace(new RegExp(key + "=([^;]*)"), key + "=" + value)
-        document.location.hash = hash
-      }
+});
 
-      function init() {
+// 'hash' for anchor portion of url instead of 'search' for query portion. See http://www.w3schools.com/jsref/obj_location.asp
+function setHashValue(key, value) {
 
-        var input_start = getHashValue('start');
-        var input_end = getHashValue('end');
+  if (getHashValue(key) != null) {
+    updateHashValue(key, value)
+    console.log("Replacing hash value")          
+  }
+  else {
+    addHashValue(key, value)
+    console.log("Adding hash value")
+  }
+  
+}
+function getHashValue(key) {
+    var matches = location.hash.match(new RegExp(key+"=([^;]*)"));
+    return matches ? matches[1] : null;
+  }
+function addHashValue(key, value) {
+  var hash = location.hash;
+  hash += (";" + key + "=" + value)
+  document.location.hash = hash
+}
+function updateHashValue(key, value) {
+  var hash = document.location.hash;
+  hash = hash.replace(new RegExp(key + "=([^;]*)"), key + "=" + value)
+  document.location.hash = hash
+}
 
-        console.log("Onload hash start: " + input_start)
-        console.log("Onload hash end: " + input_end)
+function init() {
 
-        map = new OpenLayers.Map("basicMap");
-        var mapnik = new OpenLayers.Layer.OSM();
-        var position = new OpenLayers.LonLat(11.51,48.12).transform(proj_wgs84, proj_sphmer);
-        var zoom = 13; 
+  hash_object.getURLHash()
 
-        map.addLayer(mapnik);
-        map.setCenter(position, zoom );
+  map = new OpenLayers.Map("basicMap");
+  var mapnik = new OpenLayers.Layer.OSM();
+  var position = new OpenLayers.LonLat(11.51,48.12).transform(proj_wgs84, proj_sphmer);
+  var zoom = 13; 
 
-        var click = new OpenLayers.Control.Click();
-        map.addControl(click);
-        click.activate();
-      }
+  map.addLayer(mapnik);
+  map.setCenter(position, zoom );
 
-      function foo() {
-        console.log("Foo")
-      }
+  var click = new OpenLayers.Control.Click();
+  map.addControl(click);
+  click.activate();
+}
+
+function foo() {
+  console.log("Foo")
+}
