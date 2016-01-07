@@ -1,5 +1,8 @@
+// Projections
 var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
 var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
+
+// Stores the anchor part of the URL as a custom object
 var hash_object = {
   start: null,
   end: null,
@@ -38,6 +41,10 @@ var hash_object = {
   }
 }
 
+///////////////////////////////////////
+// Control functions
+
+// Click control
 OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
   defaultHandlerOptions: {
       'single': true,
@@ -48,16 +55,14 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
   },
 
   initialize: function(options) {
-      this.handlerOptions = OpenLayers.Util.extend(
-          {}, this.defaultHandlerOptions
+      this.handlerOptions = OpenLayers.Util.extend({}, 
+        this.defaultHandlerOptions
       );
-      OpenLayers.Control.prototype.initialize.apply(
-          this, arguments
-      ); 
+      OpenLayers.Control.prototype.initialize.apply(this, arguments); 
       this.handler = new OpenLayers.Handler.Click(
-          this, {
-              'click': this.trigger
-          }, this.handlerOptions
+        this, 
+        {'click': this.trigger}, 
+        this.handlerOptions
       );
   }, 
 
@@ -78,13 +83,19 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
 
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// Script starts here
+
 function init_map() {
 
+  // Check URL anchor for input points
   init_points();
 
+  // Set up map
   map = new OpenLayers.Map("basicMap");
   var mapnik = new OpenLayers.Layer.OSM();
-  var position = new OpenLayers.LonLat(11.51,48.12).transform(proj_wgs84, proj_sphmer);
+  var position = new OpenLayers.LonLat(11.51,48.12).transform(proj_wgs84, 
+    proj_sphmer);
   var zoom = 13; 
 
   map.addLayer(mapnik);
