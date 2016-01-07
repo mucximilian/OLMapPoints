@@ -3,7 +3,8 @@ var map;
 var point_style_start = {
     externalGraphic: 'img/arrow.png',
     graphicHeight: 32,
-    graphicWidth: 32
+    graphicWidth: 32,
+    graphicYOffset: -32
 };
 
 var point_style_end = {
@@ -162,8 +163,6 @@ function init_map() {
   map.addLayer(point_start);
   map.addLayer(point_end);
 
-  console.log("bla")
-
   map.setCenter(position, zoom);
 
   // Check URL anchor for input points
@@ -181,9 +180,12 @@ function init_points() {
   console.log("init points")
 
   hash_object.getURLHash()
-  hash_object.logPoints()
+  //hash_object.logPoints()
 
-  if (hash_object.start != null) {    
+  // TO DO:
+  // Create function for true cases
+  // Check if possible to update feature instead of creating and deleting it
+  if (hash_object.start != null) { 
 
     point = new OpenLayers.Geometry.Point(
       hash_object.start.lon, hash_object.start.lat)
@@ -191,11 +193,8 @@ function init_points() {
     var attributes = {name: "my name", bar: "foo"};
     geom = new OpenLayers.Feature.Vector(point, attributes);
 
+    point_start.removeAllFeatures();
     point_start.addFeatures([geom]);
-
-    console.log(geom)
-    console.log(point);
-    console.log(point_start.features.length);
   }
   if (hash_object.end != null) {
     point_end.addFeatures([hash_object.end]);
