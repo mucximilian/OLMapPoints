@@ -2,10 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8"> 
-    <title>Point Marker OpenLayers</title>
+    <title>Point Marker OpenLayers Test</title>
     <link rel="stylesheet" href="style.css">
     <script src="http://openlayers.org/api/OpenLayers.js"></script>
     <script>
+        
+    var map
 
     // Projections
     var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
@@ -21,7 +23,7 @@
     // };
 
     var point_style = {
-      externalGraphic: 'cross.png',
+      externalGraphic: 'img/cross.png',
       graphicHeight: 32,
       graphicWidth: 32
     };
@@ -38,7 +40,7 @@
     function init_map() {
 
       // Set up map
-      var map = new OpenLayers.Map("basicMap");
+      map = new OpenLayers.Map("map");
       
       // Adding map layers for OSM background and vector geometry (points)
       var mapnik = new OpenLayers.Layer.OSM();
@@ -75,7 +77,7 @@
 
     </script>
   </head>
-  <body onload="init_map();" onhashchange="init_points()">
-    <div id="basicMap"></div>
+  <body onload="init_map()">
+    <div id="map"></div>
   </body>
 </html>
