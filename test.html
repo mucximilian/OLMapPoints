@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"> 
+    <title>Point Marker OpenLayers</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+    <script>
+
+    // Projections
+    var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
+    var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
+
+    // var point_style = {
+    //     strokeColor: '#ff0000',
+    //     fillColor: '#ff0000',
+    //     strokeOpacity: 1,
+    //     strokeWidth: 10,
+    //     pointRadius: 10,
+    //     graphicName: "cross"
+    // };
+
+    var point_style = {
+      externalGraphic: 'cross.png',
+      graphicHeight: 32,
+      graphicWidth: 32
+    };
+
+
+    var style_point = new OpenLayers.StyleMap({
+      "default": point_style,
+      "select": point_style,
+      "temporary": point_style
+    }, {
+      extendDefault: false
+    });
+
+    function init_map() {
+
+      // Set up map
+      var map = new OpenLayers.Map("basicMap");
+      
+      // Adding map layers for OSM background and vector geometry (points)
+      var mapnik = new OpenLayers.Layer.OSM();
+      var points = new OpenLayers.Layer.Vector(
+        "point start",
+        {styleMap: style_point}
+      );
+      
+      var position = new OpenLayers.LonLat(11.468,48.063).transform(proj_wgs84, 
+        proj_sphmer);
+      var zoom = 13; 
+
+      map.addLayer(mapnik);
+      map.addLayer(points);      
+
+      map.setCenter(position, zoom );
+
+      console.log(points.features.length);
+
+      lonlat = new OpenLayers.LonLat(11.46897,48.06399).transform(
+        proj_wgs84, proj_sphmer);
+
+      point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
+      var attributes = {name: "my name", bar: "foo"};
+
+      geom = new OpenLayers.Feature.Vector(point, attributes);
+
+      points.addFeatures([geom]);
+
+      console.log(geom)
+      console.log(point);
+      console.log(points.features.length);
+    }
+
+    </script>
+  </head>
+  <body onload="init_map();" onhashchange="init_points()">
+    <div id="basicMap"></div>
+  </body>
+</html>
