@@ -16,6 +16,7 @@ If the site is already accessed with a hash property, the point is automatically
 
 ## TO DOs:
 * Adding more points to the URL anchor (i.e. start point, end point and an arbitrary number of points in between)
+* Adding user interactivity to select which point to add
 * Implementing point dragging
 
 * * *
