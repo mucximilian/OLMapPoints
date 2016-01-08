@@ -6,11 +6,11 @@ A simple OpenLayers web mapping application that allows the user to add points w
 
 The application page **index.html** can be accessed via a web browser. 
 
-    https://...<url>.../index.html
+    <URL>/index.html
 
 An [OpenStreetMap](http://www.penstreetmap.org) map is displyed and the user can click on the map. This adds the Lat/Lon coordinates as hash property to the URL anchor and looks like this:
 
-    https://...<url>.../index.html#start=11.57557,48.13717
+    <URL>/index.html#start=11.57557,48.13717
     
 If the site is already accessed with a hash property, the point is automatically displayed on the map already. Clicking anywhere changes the location and updates the hash value again.
 
