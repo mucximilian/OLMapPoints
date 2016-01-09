@@ -14,7 +14,7 @@ An [OpenStreetMap](http://www.penstreetmap.org) map is displyed and the user can
     
 If the site is already accessed with a hash property, the point is automatically displayed on the map already. Clicking anywhere changes the location and updates the hash value again.
 
-## TO DOs:
+## TO DOs
 * Add more points to the URL anchor (i.e. start point, end point and an arbitrary number of points in between)
 * Add user interactivity to select which point to add
 * Point dragging functionality
