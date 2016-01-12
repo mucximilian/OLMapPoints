@@ -1,5 +1,12 @@
 var map;
 
+var btnAddStart = new OpenLayers.Control.Button({
+    id: "bla",
+    displayClass: "olControlBtnAddStart",
+    title: "Add a start point",
+    trigger: btnAddStartClicked
+});
+
 // Point style definitions
 var point_style_start = {
     externalGraphic: 'img/arrow.png',
@@ -33,177 +40,187 @@ var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
 
 // Manage the anchor part of the URL with a custom object
 var hash_object = {
-  start: null,
-  end: null,
-  // Get the start and end hash values from the anchor string as transformed
-  // LonLat coordinates
-  getURLHash: function() {
-    start = this.getHashValue("start");
-    end = this.getHashValue("end");
+    start: null,
+    end: null,
+    // Get the start and end hash values from the anchor string as transformed
+    // LonLat coordinates
+    getURLHash: function () {
+        start = this.getHashValue("start");
+        end = this.getHashValue("end");
 
-    if (start != null) {
-      this.start = this.getLatLonFromStrings(start);
+        if (start != null) {
+            this.start = this.getLatLonFromStrings(start);
+        }
+        if (end != null) {
+            this.end = this.getLatLonFromStrings(end);
+        }
+    },
+    // Get the desired hash value by its key as a simple string
+    getHashValue: function (key) {
+        var matches = location.hash.match(new RegExp(key + "=([^;]*)"));
+        return matches ? matches[1] : null;
+    },
+    // Splits a string with a coordinate pair and returns it as LonLat
+    getLatLonFromStrings: function (coords) {
+        coords = coords.split(",");
+        lonlat = new OpenLayers.LonLat(
+                parseFloat(coords[0]),
+                parseFloat(coords[1])
+                )
+
+        return lonlat.transform(proj_wgs84, proj_sphmer);
+    },
+    // Set the start and end hash values in the anchor string from transformed
+    // LonLat coordinates
+    setURLHash: function () {
+        values = []
+        sep1 = ";"
+        sep2 = "="
+
+        if (this.start != null) {
+            start = hash_object.getLatLonString(this.start)
+            values.push(["start", start].join(sep2))
+        }
+
+        if (this.end != null) {
+            end = getLatLonString(this.end)
+            values.push(["end", end].join(sep2))
+        }
+
+        hash = values.join(sep1)
+        document.location.hash = hash
+    },
+    // Transforms and combines the coordinates of a LatLon in a truncated string
+    getLatLonString: function (point) {
+
+        lonlat = point.clone();
+        lonlat.transform(proj_sphmer, proj_wgs84);
+
+        lon = Number((lonlat.lon).toFixed(5));
+        lat = Number((lonlat.lat).toFixed(5));
+
+        point_string = [lon, lat].join(",");
+
+        return point_string;
+    },
+    logPoints: function () {
+        console.log("start = " + this.start + "; end = " + this.end);
     }
-    if (end != null) {
-      this.end = this.getLatLonFromStrings(end);
-    }
-  },
-  // Get the desired hash value by its key as a simple string
-  getHashValue: function(key) {
-    var matches = location.hash.match(new RegExp(key+"=([^;]*)"));
-    return matches ? matches[1] : null;
-  },
-  // Splits a string with a coordinate pair and returns it as LonLat
-  getLatLonFromStrings: function(coords) {
-    coords = coords.split(",");
-    lonlat = new OpenLayers.LonLat(
-        parseFloat(coords[0]),
-        parseFloat(coords[1])
-      )
-
-    return lonlat.transform(proj_wgs84, proj_sphmer);
-  },
-  // Set the start and end hash values in the anchor string from transformed
-  // LonLat coordinates
-  setURLHash: function() {
-    values = []
-    sep1 = ";"
-    sep2 = "="
-
-    if (this.start != null)  {
-      start = hash_object.getLatLonString(this.start)
-      values.push(["start", start].join(sep2))
-    }
-
-    if (this.end != null)  {
-      end = getLatLonString(this.end)
-      values.push(["end", end].join(sep2))
-    }
-
-    hash = values.join(sep1)
-    document.location.hash = hash
-  },
-  // Transforms and combines the coordinates of a LatLon in a truncated string
-  getLatLonString: function(point) {
-
-    lonlat = point.clone();
-    lonlat.transform(proj_sphmer, proj_wgs84);
-
-    lon = Number((lonlat.lon).toFixed(5));
-    lat = Number((lonlat.lat).toFixed(5));
-
-    point_string = [lon, lat].join(",");
-
-    return point_string;
-  },
-  logPoints: function() {
-    console.log("start = " + this.start + "; end = " + this.end);
-  }
 }
 
 ///////////////////////////////////////
 // Control functions
 
 // Click control
-OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
-  defaultHandlerOptions: {
-      'single': true,
-      'double': false,
-      'pixelTolerance': 0,
-      'stopSingle': false,
-      'stopDouble': false
-  },
-
-  initialize: function(options) {
-      this.handlerOptions = OpenLayers.Util.extend({}, 
-        this.defaultHandlerOptions
-      );
-      OpenLayers.Control.prototype.initialize.apply(this, arguments); 
-      this.handler = new OpenLayers.Handler.Click(
-        this, 
-        {'click': this.trigger}, 
+OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
+    defaultHandlerOptions: {
+        'single': true,
+        'double': false,
+        'pixelTolerance': 0,
+        'stopSingle': false,
+        'stopDouble': false
+    },
+    initialize: function (options) {
+        this.handlerOptions = OpenLayers.Util.extend({},
+                this.defaultHandlerOptions
+                );
+        OpenLayers.Control.prototype.initialize.apply(this, arguments);
+        this.handler = new OpenLayers.Handler.Click(
+                this,
+                {'click': this.trigger},
         this.handlerOptions
-      );
-  }, 
+                );
+    },
+    trigger: function (e) {
 
-  trigger: function(e) {
-      
-      var lonlat = map.getLonLatFromPixel(e.xy);
+        var lonlat = map.getLonLatFromPixel(e.xy);
 
-      hash_object.start = lonlat;
-      hash_object.setURLHash();
-  }
+        hash_object.start = lonlat;
+        hash_object.setURLHash();
+    }
 
 });
+
+function btnAddStartClicked() {
+    foo();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Script starts here
 
-var point_start
-var point_end
+var point_start;
+var point_end;
 
 function init_map() {
 
-  // Set up map
-  map = new OpenLayers.Map("map");
+    // Set up map
+    map = new OpenLayers.Map("map");
 
-  var position = new OpenLayers.LonLat(11.51,48.12).transform(proj_wgs84, 
-    proj_sphmer);
-  var zoom = 13; 
-  
-  // Adding map layers for OSM background and vector geometry (points)
-  var mapnik = new OpenLayers.Layer.OSM();
-  point_start = new OpenLayers.Layer.Vector(
-    "point start",
-    {styleMap: style_point_start}
-  );
-  point_end = new OpenLayers.Layer.Vector(
-    "point end",
-    {styleMap: style_point_end}
-  );
+    var position = new OpenLayers.LonLat(11.51, 48.12).transform(proj_wgs84,
+            proj_sphmer);
+    var zoom = 13;
 
-  map.addLayer(mapnik);
-  map.addLayer(point_start);
-  map.addLayer(point_end);
+    // Adding map layers for OSM background and vector geometry (points)
+    var mapnik = new OpenLayers.Layer.OSM();
+    point_start = new OpenLayers.Layer.Vector(
+            "point start",
+            {styleMap: style_point_start}
+    );
+    point_end = new OpenLayers.Layer.Vector(
+            "point end",
+            {styleMap: style_point_end}
+    );
 
-  map.setCenter(position, zoom);
+    map.addLayer(mapnik);
+    map.addLayer(point_start);
+    map.addLayer(point_end);
 
-  // Check URL anchor for input points
-  init_points();
+    map.setCenter(position, zoom);
 
-  //map.addControl(new OpenLayers.Control.LayerSwitcher());
+    // Setting up the toolbar
+    panel = new OpenLayers.Control.Panel({});
+    panel.addControls([btnAddStart]);
+    map.addControl(panel);
 
-  var click = new OpenLayers.Control.Click();
-  map.addControl(click);
-  click.activate();
+    var custom_button_div = document.getElementsByClassName("olControlBtnAddStartItemInactive")[0];
+    custom_button_div.innerHTML = "Start";
+
+    // Check URL anchor for input points
+    init_points();
+
+    //map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+    var click = new OpenLayers.Control.Click();
+    map.addControl(click);
+    click.activate();
 }
 
 function init_points() {
 
-  console.log("init points")
+    console.log("init points");
 
-  hash_object.getURLHash()
-  hash_object.logPoints()
+    hash_object.getURLHash();
+    hash_object.logPoints();
 
-  // TO DO:
-  // Create function for true cases
-  // Check if possible to update feature instead of creating and deleting it
-  if (hash_object.start != null) { 
+    // TO DO:
+    // Create function for true cases
+    // Check if possible to update feature instead of creating and deleting it
+    if (hash_object.start !== null) {
 
-    point = new OpenLayers.Geometry.Point(
-      hash_object.start.lon, hash_object.start.lat)
+        point = new OpenLayers.Geometry.Point(
+                hash_object.start.lon, hash_object.start.lat)
 
-    var attributes = {name: "my name", bar: "foo"};
-    geom = new OpenLayers.Feature.Vector(point, attributes);
+        var attributes = {name: "my name", bar: "foo"};
+        geom = new OpenLayers.Feature.Vector(point, attributes);
 
-    point_start.removeAllFeatures();
-    point_start.addFeatures([geom]);
-  }
-  if (hash_object.end != null) {
-    point_end.addFeatures([hash_object.end]);
-  }  
+        point_start.removeAllFeatures();
+        point_start.addFeatures([geom]);
+    }
+    if (hash_object.end !== null) {
+        point_end.addFeatures([hash_object.end]);
+    }
 }
 
 function foo() {
-  console.log("Foo")
+    console.log("Foo");
 }
