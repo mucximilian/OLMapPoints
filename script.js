@@ -1,10 +1,17 @@
 var map;
 
+var click;
+
 var btnAddStart = new OpenLayers.Control.Button({
     id: "bla",
     displayClass: "olControlBtnAddStart",
     title: "Add a start point",
-    trigger: btnAddStartClicked
+    //trigger: btnAddStartClicked,
+    eventListeners: {
+        'activate': toggle_button_activate_func,
+        'deactivate': toggle_button_deactivate_func
+    },
+    type: OpenLayers.Control.TYPE_TOGGLE
 });
 
 // Point style definitions
@@ -138,8 +145,23 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
         hash_object.start = lonlat;
         hash_object.setURLHash();
     }
-
 });
+
+//Create a function for the toggle button
+function toggle_button_activate_func() {
+    //Attach the map_event_function to the map
+    console.log("Activate toggle")
+    map.events.register('click', map, foo);
+    click.activate();
+}
+function toggle_button_deactivate_func() {
+    console.log("Deactivate toggle")
+    //Remove the map_event_function from the map
+    map.events.unregister('click', map, foo);
+    //Restore the layer's opacity
+    map.layers[0].setOpacity(1);
+    click.deactivate();
+}
 
 function btnAddStartClicked() {
     foo();
@@ -190,11 +212,11 @@ function init_map() {
 
     //map.addControl(new OpenLayers.Control.LayerSwitcher());
 
-    var click = new OpenLayers.Control.Click();
+    click = new OpenLayers.Control.Click();
     map.addControl(click);
-    click.activate();
 }
 
+// Point initialization is called everytime the URL hash has been updated
 function init_points() {
 
     console.log("init points");

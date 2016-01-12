@@ -25,6 +25,18 @@ p {
     color: #FFFFFF;
 }
 
+.olControlBtnAddStartItemActive {
+    float:left;
+    background:#4477AA;
+    border:3px solid #999999;
+} 
+
+.olControlBtnAddStartItemInactive {
+    float:left;
+    background:#BBBBBB;
+    border: 3px solid #999999; 
+}
+
 .olControlBtnInactive {  
     background-color: rgba(0, 60, 136, 0.4);
 }
