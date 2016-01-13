@@ -2,14 +2,26 @@ var map;
 
 var click;
 
+var point_type;
+
 var btnAddStart = new OpenLayers.Control.Button({
-    id: "bla",
+    id: "start",
     displayClass: "olControlBtnAddStart",
     title: "Add a start point",
-    //trigger: btnAddStartClicked,
     eventListeners: {
-        'activate': toggle_button_activate_func,
-        'deactivate': toggle_button_deactivate_func
+        'activate': add_start_act,
+        'deactivate': add_start_deact
+    },
+    type: OpenLayers.Control.TYPE_TOGGLE
+});
+
+var btnAddEnd = new OpenLayers.Control.Button({
+    id: "end",
+    displayClass: "olControlBtnAddEnd",
+    title: "Add an end point",
+    eventListeners: {
+        'activate': add_end_act,
+        'deactivate': add_end_deact
     },
     type: OpenLayers.Control.TYPE_TOGGLE
 });
@@ -84,13 +96,13 @@ var hash_object = {
         sep1 = ";"
         sep2 = "="
 
-        if (this.start != null) {
-            start = hash_object.getLatLonString(this.start)
+        if (this.start !== null) {
+            start = this.getLatLonString(this.start)
             values.push(["start", start].join(sep2))
         }
 
-        if (this.end != null) {
-            end = getLatLonString(this.end)
+        if (this.end !== null) {
+            end = this.getLatLonString(this.end)
             values.push(["end", end].join(sep2))
         }
 
@@ -128,10 +140,13 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
         'stopDouble': false
     },
     initialize: function (options) {
-        this.handlerOptions = OpenLayers.Util.extend({},
+        this.handlerOptions = OpenLayers.Util.extend(
+                {},
                 this.defaultHandlerOptions
                 );
+
         OpenLayers.Control.prototype.initialize.apply(this, arguments);
+
         this.handler = new OpenLayers.Handler.Click(
                 this,
                 {'click': this.trigger},
@@ -142,29 +157,48 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
 
         var lonlat = map.getLonLatFromPixel(e.xy);
 
-        hash_object.start = lonlat;
+        if (point_type === "start") {
+            hash_object.start = lonlat;
+        } else if (point_type === "end") {
+            hash_object.end = lonlat;
+        }
         hash_object.setURLHash();
     }
 });
 
 //Create a function for the toggle button
-function toggle_button_activate_func() {
-    //Attach the map_event_function to the map
-    console.log("Activate toggle")
-    map.events.register('click', map, foo);
-    click.activate();
+function add_start_act() {
+    btnAddEnd.deactivate();
+    point_type = "start";
+    toogle_act();
 }
-function toggle_button_deactivate_func() {
-    console.log("Deactivate toggle")
-    //Remove the map_event_function from the map
-    map.events.unregister('click', map, foo);
-    //Restore the layer's opacity
-    map.layers[0].setOpacity(1);
-    click.deactivate();
+function add_start_deact() {
+    toogle_deact();
 }
 
-function btnAddStartClicked() {
-    foo();
+function add_end_act() {
+    btnAddStart.deactivate();
+    point_type = "end"
+    toogle_act();
+}
+function add_end_deact() {
+    toogle_deact();
+}
+
+function toogle_act() {
+    //Attach the map_event_function to the map
+    map.events.register('click', map);
+    click.activate();
+
+    console.log("Activate toggle")
+}
+
+function toogle_deact() {
+    //Remove the map_event_function from the map
+    map.events.unregister('click', map);
+    click.deactivate();
+
+    console.log("Deactivate toggle")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -201,11 +235,13 @@ function init_map() {
 
     // Setting up the toolbar
     panel = new OpenLayers.Control.Panel({});
-    panel.addControls([btnAddStart]);
+    panel.addControls([btnAddStart, btnAddEnd]);
     map.addControl(panel);
 
-    var custom_button_div = document.getElementsByClassName("olControlBtnAddStartItemInactive")[0];
-    custom_button_div.innerHTML = "Start";
+    var start_btn_div = document.getElementsByClassName("olControlBtnAddStartItemInactive")[0];
+    start_btn_div.innerHTML = "Start";
+    var end_btn_div = document.getElementsByClassName("olControlBtnAddEndItemInactive")[0];
+    end_btn_div.innerHTML = "End";
 
     // Check URL anchor for input points
     init_points();
@@ -229,17 +265,25 @@ function init_points() {
     // Check if possible to update feature instead of creating and deleting it
     if (hash_object.start !== null) {
 
-        point = new OpenLayers.Geometry.Point(
+        point_new = new OpenLayers.Geometry.Point(
                 hash_object.start.lon, hash_object.start.lat)
 
-        var attributes = {name: "my name", bar: "foo"};
-        geom = new OpenLayers.Feature.Vector(point, attributes);
+        var attributes = {name: "Start"};
+        geom = new OpenLayers.Feature.Vector(point_new, attributes);
 
         point_start.removeAllFeatures();
         point_start.addFeatures([geom]);
     }
     if (hash_object.end !== null) {
-        point_end.addFeatures([hash_object.end]);
+        
+        point_new = new OpenLayers.Geometry.Point(
+                hash_object.end.lon, hash_object.end.lat)
+
+        var attributes = {name: "End"};
+        geom = new OpenLayers.Feature.Vector(point_new, attributes);
+
+        point_end.removeAllFeatures();
+        point_end.addFeatures([geom]);
     }
 }
 

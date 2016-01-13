@@ -4,25 +4,13 @@ html, body, #container, #map {
     margin: 0;
 }
 
-p {
-    margin: 8px;
-}
-
 .olControlPanel {
     top: 8px;
     left: 64px;
-    height: 33px;
-    width: 245px;
     cursor: pointer;
     background-color: rgba(255, 255, 255, 0.4);
     padding: 3px;
     border-radius: 4px;
-}
-
-.olControlBtn {
-    width: 50px;
-    background-color: rgba(0, 120, 160, 1);
-    color: #FFFFFF;
 }
 
 .olControlBtnAddStartItemActive {
@@ -37,11 +25,14 @@ p {
     border: 3px solid #999999; 
 }
 
-.olControlBtnInactive {  
-    background-color: rgba(0, 60, 136, 0.4);
-}
+.olControlBtnAddEndItemActive {
+    float:left;
+    background:#4477AA;
+    border:3px solid #999999;
+} 
 
-.olControlBtnInactive:hover {  
-    background-color: rgba(0, 60, 136, 0.7);
-    color: #FFFFFF;
+.olControlBtnAddEndItemInactive {
+    float:left;
+    background:#BBBBBB;
+    border: 3px solid #999999; 
 }
