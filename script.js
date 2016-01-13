@@ -42,7 +42,13 @@ var btnAddEnd = new OpenLayers.Control.Button({
 var btnCenter = new OpenLayers.Control.Button({
     displayClass: "olControlBtn olControlBtnCenter",
     trigger: center_map_on_btn_click,
-    title: "Center"
+    title: "Center map"
+})
+
+var btnReset = new OpenLayers.Control.Button({
+    displayClass: "olControlBtn olControlBtnReset",
+    trigger: reset_points,
+    title: "Reset points"
 })
 
 // Point style definitions
@@ -72,7 +78,7 @@ var style_point_end = new OpenLayers.StyleMap({
     extendDefault: false
 });
 
-// Manage the anchor part of the URL with a custom object
+// Manage the anchor part of the URL with a custom object as a global variable
 var hash_object = {
     start: null,
     end: null,
@@ -81,7 +87,7 @@ var hash_object = {
 
     // Get the start and end hash values from the anchor string as transformed
     // LonLat coordinates
-    getURLHash: function () {
+    getURLHash: function() {
         start = this.getHashValue("start");
         end = this.getHashValue("end");
 
@@ -93,7 +99,7 @@ var hash_object = {
         }
     },
     // Get the desired hash value by its key as a simple string
-    getHashValue: function (key) {
+    getHashValue: function(key) {
         var matches = location.hash.match(new RegExp(key + "=([^" + this.sep1 + "]*)"));
         return matches ? matches[1] : null;
     },
@@ -109,7 +115,7 @@ var hash_object = {
     },
     // Set the start and end hash values in the anchor string from transformed
     // LonLat coordinates
-    setURLHash: function () {
+    setURLHash: function() {
         values = [];
 
         if (this.start !== null) {
@@ -126,7 +132,7 @@ var hash_object = {
         document.location.hash = hash;
     },
     // Transforms and combines the coordinates of a LatLon in a truncated string
-    getLatLonString: function (point) {
+    getLatLonString: function(point) {
 
         lonlat = point.clone();
         lonlat.transform(proj_sphmer, proj_wgs84);
@@ -140,6 +146,12 @@ var hash_object = {
     },
     logPoints: function () {
         console.log("start = " + this.start + "; end = " + this.end);
+    },
+    reset: function() {
+        this.start = null;
+        this.end = null;
+        
+        this.setURLHash();
     }
 };
 
@@ -220,7 +232,21 @@ function toogle_deact() {
 function center_map_on_btn_click() {
     points = init_points();
     
-    center_map_to_points(points);
+    if (points.length > 0) {
+        center_map_to_points(points);
+    } else {
+        alert("Please add some points to the map!");
+    }
+}
+
+function reset_points() {
+    points = init_points();
+    
+    if (points.length > 0) {
+        hash_object.reset();
+    } else {
+        alert("Please add some points to the map!");
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -257,7 +283,12 @@ function init_map() {
 
     // Setting up the toolbar
     panel = new OpenLayers.Control.Panel({});
-    panel.addControls([btnAddStart, btnAddEnd, btnCenter]);
+    panel.addControls([
+        btnAddStart,
+        btnAddEnd,
+        btnCenter,
+        btnReset
+    ]);
     map.addControl(panel);
 
     //map.addControl(new OpenLayers.Control.LayerSwitcher());
@@ -269,8 +300,10 @@ function init_map() {
     start_btn_div.innerHTML = "Start";
     var end_btn_div = document.getElementsByClassName("olControlBtn olControlBtnAddEndItemInactive")[0];
     end_btn_div.innerHTML = "End";
-    var start_btn_div = document.getElementsByClassName("olControlBtn olControlBtnCenterItemInactive")[0];
-    start_btn_div.innerHTML = "Center";
+    var center_btn_div = document.getElementsByClassName("olControlBtn olControlBtnCenterItemInactive")[0];
+    center_btn_div.innerHTML = "Center";
+    var reset_btn_div = document.getElementsByClassName("olControlBtn olControlBtnResetItemInactive")[0];
+    reset_btn_div.innerHTML = "Reset";
 
     // Check URL anchor for input points
     points = init_points();
@@ -300,10 +333,14 @@ function init_points() {
     if (hash_object.start !== null) {
         points.push(hash_object.start);
         addPointToLayer(hash_object.start, point_start, "Start");
+    } else {
+        point_start.removeAllFeatures();
     }
     if (hash_object.end !== null) {
         points.push(hash_object.end);
         addPointToLayer(hash_object.end, point_end, "End");
+    } else {
+        point_end.removeAllFeatures();
     }
 
     return points;

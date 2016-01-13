@@ -52,3 +52,18 @@ html, body, #container, #map {
     background:#4477AA;
     color: #FFFFFF;
 }
+
+.olControlBtnCenterItemInactive:hover {    
+    background:#77AADD;
+    color: #FFFFFF;
+}
+
+.olControlBtnResetItemInactive {    
+    background:#4477AA;
+    color: #FFFFFF;
+}
+
+.olControlBtnResetItemInactive:hover {    
+    background:#77AADD;
+    color: #FFFFFF;
+}
