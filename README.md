@@ -17,14 +17,16 @@ Or
     <URL>/index.html#end=11.58675,48.19876
 
 Or
+
     <URL>/index.html#start=11.57557,48.13717;end=11.58675,48.19876
     
-If the site is already accessed with a hash property, the point is automatically displayed on the map already. Clicking anywhere changes the location and updates the hash value again.
+If the site is already accessed with a hash property defined in the URL, the points are automatically displayed on the map already. Clicking anywhere changes the location and updates the hash value again.
 
 ## TO DOs
 * Add an arbitrary number of points in between to the URL anchor
 * Add user interactivity to select which point to add
 * Point dragging functionality
+* Add buttons to center and reset points
 * Update to OpenLayers3 which would solve some interactivity issues (dragging)
 
 * * *
