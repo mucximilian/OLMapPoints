@@ -3,8 +3,6 @@
  * 
  * TO DOs:
  * 
- * - Add button CENTER
- * - Add button RESET
  * 
  */
 
@@ -130,6 +128,7 @@ var hash_object = {
 
         hash = values.join(this.sep1);
         document.location.hash = hash;
+        document.URL.replace(/#.*$/, "")
     },
     // Transforms and combines the coordinates of a LatLon in a truncated string
     getLatLonString: function(point) {
@@ -151,7 +150,10 @@ var hash_object = {
         this.start = null;
         this.end = null;
         
-        this.setURLHash();
+        this.setURLHash(); // Resets but # anchor of the URL is kept
+              
+        // Reset and reload entire page
+        //document.location = document.location.host;
     }
 };
 
