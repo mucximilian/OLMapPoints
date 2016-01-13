@@ -209,6 +209,8 @@ var point_end;
 
 function init_map() {
 
+    console.log("Setting up map application");
+
     // Set up map
     map = new OpenLayers.Map("map");
 
@@ -231,12 +233,15 @@ function init_map() {
     map.addLayer(point_start);
     map.addLayer(point_end);
 
-    map.setCenter(position, zoom);
-
     // Setting up the toolbar
     panel = new OpenLayers.Control.Panel({});
     panel.addControls([btnAddStart, btnAddEnd]);
     map.addControl(panel);
+
+    //map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+    click = new OpenLayers.Control.Click();
+    map.addControl(click);
 
     var start_btn_div = document.getElementsByClassName("olControlBtnAddStartItemInactive")[0];
     start_btn_div.innerHTML = "Start";
@@ -244,16 +249,22 @@ function init_map() {
     end_btn_div.innerHTML = "End";
 
     // Check URL anchor for input points
-    init_points();
+    points = init_points();
 
-    //map.addControl(new OpenLayers.Control.LayerSwitcher());
-
-    click = new OpenLayers.Control.Click();
-    map.addControl(click);
+    if (points.length > 0) {
+        center = get_points_center(points);
+        console.log("Map center calculated from points")
+    } else {
+        map.setCenter(position, zoom);
+        console.log("No points available, map centered at " + position)
+    }
 }
 
-// Point initialization is called everytime the URL hash has been updated
+// Point initialization is called everytime the URL hash has been updated as
+// defined in index.html
 function init_points() {
+
+    points = [];
 
     console.log("init points");
 
@@ -265,26 +276,31 @@ function init_points() {
     // Check if possible to update feature instead of creating and deleting it
     if (hash_object.start !== null) {
 
-        point_new = new OpenLayers.Geometry.Point(
-                hash_object.start.lon, hash_object.start.lat)
+        point = hash_object.start;        
+        points.push(point);
 
-        var attributes = {name: "Start"};
-        geom = new OpenLayers.Feature.Vector(point_new, attributes);
-
-        point_start.removeAllFeatures();
-        point_start.addFeatures([geom]);
+        addPointToLayer(point, point_start, "Start")
     }
     if (hash_object.end !== null) {
-        
-        point_new = new OpenLayers.Geometry.Point(
-                hash_object.end.lon, hash_object.end.lat)
 
-        var attributes = {name: "End"};
-        geom = new OpenLayers.Feature.Vector(point_new, attributes);
+        point = hash_object.end;        
+        points.push(point);
 
-        point_end.removeAllFeatures();
-        point_end.addFeatures([geom]);
+        addPointToLayer(point, point_end, "End")
     }
+
+    return points;
+}
+
+function addPointToLayer(point, layer, name) {
+    
+    point_new = new OpenLayers.Geometry.Point(point.lon, point.lat)
+    
+    var attributes = {name: name};
+    geom = new OpenLayers.Feature.Vector(point_new, attributes);
+
+    layer.removeAllFeatures();
+    layer.addFeatures([geom]);
 }
 
 function foo() {
