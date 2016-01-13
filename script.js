@@ -20,8 +20,7 @@ var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
 
 // Buttons
 var btnAddStart = new OpenLayers.Control.Button({
-    id: "start",
-    displayClass: "olControlBtnAddStart",
+    displayClass: "olControlBtn olControlBtnAddStart",
     title: "Add a start point",
     eventListeners: {
         'activate': add_start_act,
@@ -31,8 +30,7 @@ var btnAddStart = new OpenLayers.Control.Button({
 });
 
 var btnAddEnd = new OpenLayers.Control.Button({
-    id: "end",
-    displayClass: "olControlBtnAddEnd",
+    displayClass: "olControlBtn olControlBtnAddEnd",
     title: "Add an end point",
     eventListeners: {
         'activate': add_end_act,
@@ -40,6 +38,12 @@ var btnAddEnd = new OpenLayers.Control.Button({
     },
     type: OpenLayers.Control.TYPE_TOGGLE
 });
+
+var btnCenter = new OpenLayers.Control.Button({
+    displayClass: "olControlBtn olControlBtnCenter",
+    trigger: foo,
+    title: "Center"
+})
 
 // Point style definitions
 var point_style_start = {
@@ -247,7 +251,7 @@ function init_map() {
 
     // Setting up the toolbar
     panel = new OpenLayers.Control.Panel({});
-    panel.addControls([btnAddStart, btnAddEnd]);
+    panel.addControls([btnAddStart, btnAddEnd, btnCenter]);
     map.addControl(panel);
 
     //map.addControl(new OpenLayers.Control.LayerSwitcher());
@@ -255,10 +259,12 @@ function init_map() {
     click = new OpenLayers.Control.Click();
     map.addControl(click);
 
-    var start_btn_div = document.getElementsByClassName("olControlBtnAddStartItemInactive")[0];
+    var start_btn_div = document.getElementsByClassName("olControlBtn olControlBtnAddStartItemInactive")[0];
     start_btn_div.innerHTML = "Start";
-    var end_btn_div = document.getElementsByClassName("olControlBtnAddEndItemInactive")[0];
+    var end_btn_div = document.getElementsByClassName("olControlBtn olControlBtnAddEndItemInactive")[0];
     end_btn_div.innerHTML = "End";
+    var start_btn_div = document.getElementsByClassName("olControlBtn olControlBtnCenterItemInactive")[0];
+    start_btn_div.innerHTML = "Center";
 
     // Check URL anchor for input points
     points = init_points();

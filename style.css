@@ -8,31 +8,47 @@ html, body, #container, #map {
     top: 8px;
     left: 64px;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.4);
-    padding: 3px;
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 2px;
+    border-radius: 3px;
+}
+
+.olControlBtn {
+    padding: 4px;
+    border-radius: 3px;
+    float:left;
+    margin: 2px;
+    font-family: Arial;
+    font-size: 1em;
+    color: #4477AA;
+}
+
+.olControlBtn.olControlBtnAddStart.olControlNoSelect {
+    display: none;
+}
+.olControlBtn.olControlBtnAddEnd.olControlNoSelect {
+    display: none;
 }
 
 .olControlBtnAddStartItemActive {
-    float:left;
-    background:#4477AA;
-    border:3px solid #999999;
+    background:#77AADD;
+    color: #FFFFFF;
 } 
 
 .olControlBtnAddStartItemInactive {
-    float:left;
-    background:#BBBBBB;
-    border: 3px solid #999999; 
+    background: #DDDDDD;
 }
 
 .olControlBtnAddEndItemActive {
-    float:left;
-    background:#4477AA;
-    border:3px solid #999999;
+    background:#77AADD;
+    color: #FFFFFF;
 } 
 
-.olControlBtnAddEndItemInactive {
-    float:left;
-    background:#BBBBBB;
-    border: 3px solid #999999; 
+.olControlBtnAddEndItemInactive {    
+    background: #DDDDDD;
+}
+
+.olControlBtnCenterItemInactive {    
+    background:#4477AA;
+    color: #FFFFFF;
 }
