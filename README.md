@@ -31,7 +31,9 @@ If the site is already accessed with a hash property defined in the URL, the poi
 * Add user interactivity to select which point to add
 * Point dragging functionality
 * Add buttons to center and reset points
-* Update to OpenLayers3 which would solve some interactivity issues (dragging)
+* Update to OpenLayers3
+  * Solve interactivity issues (dragging)
+  * Examples: [Draw and Modify Features](http://openlayers.org/en/v3.12.1/examples/draw-and-modify-features.html), [Custom controls](http://openlayers.org/en/v3.5.0/examples/custom-controls.html)
 
 * * *
 License: GNU GENERAL PUBLIC LICENSE
