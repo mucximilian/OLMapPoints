@@ -41,7 +41,7 @@ var btnAddEnd = new OpenLayers.Control.Button({
 
 var btnCenter = new OpenLayers.Control.Button({
     displayClass: "olControlBtn olControlBtnCenter",
-    trigger: foo,
+    trigger: center_map_on_btn_click,
     title: "Center"
 })
 
@@ -217,6 +217,12 @@ function toogle_deact() {
     console.log("Deactivate toggle");
 }
 
+function center_map_on_btn_click() {
+    points = init_points();
+    
+    center_map_to_points(points);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Script starts here
 
@@ -270,7 +276,7 @@ function init_map() {
     points = init_points();
 
     if (points.length > 0) {
-        center = get_points_center(points);
+        center = center_map_to_points(points);
         console.log("Map center calculated from points");
     } else {
         map.setCenter(position, zoom);
@@ -314,7 +320,7 @@ function addPointToLayer(point, layer, name) {
     layer.addFeatures([geom]);
 }
 
-function get_points_center(points) {
+function center_map_to_points(points) {
 
     console.log(points);
 
