@@ -272,21 +272,14 @@ function init_points() {
     hash_object.logPoints();
 
     // TO DO:
-    // Create function for true cases
     // Check if possible to update feature instead of creating and deleting it
-    if (hash_object.start !== null) {
-
-        point = hash_object.start;        
-        points.push(point);
-
-        addPointToLayer(point, point_start, "Start")
+    if (hash_object.start !== null) {      
+        points.push(hash_object.start);
+        addPointToLayer(hash_object.start, point_start, "Start");
     }
-    if (hash_object.end !== null) {
-
-        point = hash_object.end;        
-        points.push(point);
-
-        addPointToLayer(point, point_end, "End")
+    if (hash_object.end !== null) {     
+        points.push(hash_object.end);
+        addPointToLayer(hash_object.end, point_end, "End");
     }
 
     return points;
@@ -294,13 +287,31 @@ function init_points() {
 
 function addPointToLayer(point, layer, name) {
     
-    point_new = new OpenLayers.Geometry.Point(point.lon, point.lat)
+    point_new = new OpenLayers.Geometry.Point(point.lon, point.lat);
     
     var attributes = {name: name};
     geom = new OpenLayers.Feature.Vector(point_new, attributes);
 
     layer.removeAllFeatures();
     layer.addFeatures([geom]);
+}
+
+function get_points_center(points) {
+    
+    console.log(points);
+    
+    bounds = new OpenLayers.Bounds();
+    
+    for (var i = 0; i < points.length; i++) {
+        console.log(points[i])
+        bounds.extend(points[i]);
+    }
+    
+    center = bounds.getCenterLonLat();
+    
+    console.log("Centering map at " + center)
+    
+    map.setCenter(center, map.getZoomForExtent(bounds, true) - 1);
 }
 
 function foo() {
