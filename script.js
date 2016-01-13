@@ -1,9 +1,24 @@
+/*
+ * OLMapPoints, an OpenLayers tool to share points on a map using the URL hash
+ * 
+ * TO DOs:
+ * 
+ * - Add button CENTER
+ * - Add button RESET
+ * 
+ */
+
+
+// Some global variables
 var map;
-
 var click;
-
 var point_type;
 
+// Used projections
+var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
+var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
+
+// Buttons
 var btnAddStart = new OpenLayers.Control.Button({
     id: "start",
     displayClass: "olControlBtnAddStart",
@@ -53,30 +68,29 @@ var style_point_end = new OpenLayers.StyleMap({
     extendDefault: false
 });
 
-// Used projections
-var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
-var proj_sphmer = new OpenLayers.Projection("EPSG:900913");
-
 // Manage the anchor part of the URL with a custom object
 var hash_object = {
     start: null,
     end: null,
+    sep1: "&", // separator between point objects
+    sep2: "=", // separator between point name and coordinates
+
     // Get the start and end hash values from the anchor string as transformed
     // LonLat coordinates
     getURLHash: function () {
         start = this.getHashValue("start");
         end = this.getHashValue("end");
 
-        if (start != null) {
+        if (start !== null) {
             this.start = this.getLatLonFromStrings(start);
         }
-        if (end != null) {
+        if (end !== null) {
             this.end = this.getLatLonFromStrings(end);
         }
     },
     // Get the desired hash value by its key as a simple string
     getHashValue: function (key) {
-        var matches = location.hash.match(new RegExp(key + "=([^;]*)"));
+        var matches = location.hash.match(new RegExp(key + "=([^" + this.sep1 + "]*)"));
         return matches ? matches[1] : null;
     },
     // Splits a string with a coordinate pair and returns it as LonLat
@@ -85,29 +99,27 @@ var hash_object = {
         lonlat = new OpenLayers.LonLat(
                 parseFloat(coords[0]),
                 parseFloat(coords[1])
-                )
+                );
 
         return lonlat.transform(proj_wgs84, proj_sphmer);
     },
     // Set the start and end hash values in the anchor string from transformed
     // LonLat coordinates
     setURLHash: function () {
-        values = []
-        sep1 = ";"
-        sep2 = "="
+        values = [];
 
         if (this.start !== null) {
-            start = this.getLatLonString(this.start)
-            values.push(["start", start].join(sep2))
+            start = this.getLatLonString(this.start);
+            values.push(["start", start].join(this.sep2));
         }
 
         if (this.end !== null) {
-            end = this.getLatLonString(this.end)
-            values.push(["end", end].join(sep2))
+            end = this.getLatLonString(this.end);
+            values.push(["end", end].join(this.sep2));
         }
 
-        hash = values.join(sep1)
-        document.location.hash = hash
+        hash = values.join(this.sep1);
+        document.location.hash = hash;
     },
     // Transforms and combines the coordinates of a LatLon in a truncated string
     getLatLonString: function (point) {
@@ -125,7 +137,7 @@ var hash_object = {
     logPoints: function () {
         console.log("start = " + this.start + "; end = " + this.end);
     }
-}
+};
 
 ///////////////////////////////////////
 // Control functions
@@ -178,7 +190,7 @@ function add_start_deact() {
 
 function add_end_act() {
     btnAddStart.deactivate();
-    point_type = "end"
+    point_type = "end";
     toogle_act();
 }
 function add_end_deact() {
@@ -190,7 +202,7 @@ function toogle_act() {
     map.events.register('click', map);
     click.activate();
 
-    console.log("Activate toggle")
+    console.log("Activate toggle");
 }
 
 function toogle_deact() {
@@ -198,7 +210,7 @@ function toogle_deact() {
     map.events.unregister('click', map);
     click.deactivate();
 
-    console.log("Deactivate toggle")
+    console.log("Deactivate toggle");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -253,10 +265,10 @@ function init_map() {
 
     if (points.length > 0) {
         center = get_points_center(points);
-        console.log("Map center calculated from points")
+        console.log("Map center calculated from points");
     } else {
         map.setCenter(position, zoom);
-        console.log("No points available, map centered at " + position)
+        console.log("No points available, map centered at " + position);
     }
 }
 
@@ -273,11 +285,11 @@ function init_points() {
 
     // TO DO:
     // Check if possible to update feature instead of creating and deleting it
-    if (hash_object.start !== null) {      
+    if (hash_object.start !== null) {
         points.push(hash_object.start);
         addPointToLayer(hash_object.start, point_start, "Start");
     }
-    if (hash_object.end !== null) {     
+    if (hash_object.end !== null) {
         points.push(hash_object.end);
         addPointToLayer(hash_object.end, point_end, "End");
     }
@@ -286,9 +298,9 @@ function init_points() {
 }
 
 function addPointToLayer(point, layer, name) {
-    
+
     point_new = new OpenLayers.Geometry.Point(point.lon, point.lat);
-    
+
     var attributes = {name: name};
     geom = new OpenLayers.Feature.Vector(point_new, attributes);
 
@@ -297,20 +309,20 @@ function addPointToLayer(point, layer, name) {
 }
 
 function get_points_center(points) {
-    
+
     console.log(points);
-    
+
     bounds = new OpenLayers.Bounds();
-    
+
     for (var i = 0; i < points.length; i++) {
         console.log(points[i])
         bounds.extend(points[i]);
     }
-    
+
     center = bounds.getCenterLonLat();
-    
+
     console.log("Centering map at " + center)
-    
+
     map.setCenter(center, map.getZoomForExtent(bounds, true) - 1);
 }
 
