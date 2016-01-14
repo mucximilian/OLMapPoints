@@ -27,8 +27,10 @@ Or
 If the site is already accessed with a hash property defined in the URL, the points are automatically displayed on the map already. Clicking anywhere changes the location and updates the hash value again.
 
 ## TO DOs
-* Add an arbitrary number of points in between to the URL anchor
-* Add point dragging functionality
+* Functionality to add:
+  * Adding a third point type that supports the adding of an arbitrary number of points to the URL anchor
+  * Point dragging functionality
+  * Export option (e.g. to GeoJSON)
 * Update to OpenLayers3
   * Solve interactivity issues (dragging)
   * Examples: [Draw and Modify Features](http://openlayers.org/en/v3.12.1/examples/draw-and-modify-features.html), [Custom controls](http://openlayers.org/en/v3.5.0/examples/custom-controls.html)
