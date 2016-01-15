@@ -32,9 +32,9 @@ If the site is already accessed with a hash property defined in the URL, the poi
   * Point dragging functionality
   * Export option (e.g. to GeoJSON)
 * Update to OpenLayers3
-  * Solve interactivity issues (dragging)
+  * Solve interactivity issues (dragging)  
     Examples: [Draw and Modify Features](http://openlayers.org/en/v3.12.1/examples/draw-and-modify-features.html), [Custom controls](http://openlayers.org/en/v3.5.0/examples/custom-controls.html)
-  * Add location search
+  * Add location search  
     Examples: [Nominatim search](http://jsfiddle.net/TimLucas/vbaupe30/5/), [Nominatim](http://wiki.openstreetmap.org/wiki/Nominatim)
 
 * * *
