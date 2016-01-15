@@ -31,11 +31,13 @@ If the site is already accessed with a hash property defined in the URL, the poi
   * Adding a third point type that supports the adding of an arbitrary number of points to the URL anchor
   * Point dragging functionality
   * Export option (e.g. to GeoJSON)
+  * *Show on OpenStreetMap.org* button
+  * Info button with GitHub link
 * Update to OpenLayers3
   * Solve interactivity issues (dragging)  
     Examples: [Draw and Modify Features](http://openlayers.org/en/v3.12.1/examples/draw-and-modify-features.html), [Custom controls](http://openlayers.org/en/v3.5.0/examples/custom-controls.html)
   * Add location search  
-    Examples: [Nominatim search](http://jsfiddle.net/TimLucas/vbaupe30/5/), [Nominatim](http://wiki.openstreetmap.org/wiki/Nominatim)
+    Examples: [Nominatim search](http://jsfiddle.net/TimLucas/vbaupe30/5/), [Nominatim Documentation](http://wiki.openstreetmap.org/wiki/Nominatim)
 
 * * *
 License: GNU GENERAL PUBLIC LICENSE
