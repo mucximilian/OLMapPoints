@@ -8,7 +8,7 @@ See [here](http://www.w3schools.com/jsref/obj_location.asp) for more information
 
 ## How it works
 
-The application page **index.html** can be accessed via a web browser. 
+The application page **index.html** can be accessed from the web browser. 
 
     <URL>/index.html
 
