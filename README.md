@@ -12,7 +12,7 @@ The application page **index.html** can be accessed via a web browser.
 
     <URL>/index.html
 
-An [OpenStreetMap](http://www.openstreetmap.org) map is displyed and the user can click on the map. The user can select if he wants to add a point of the type *Start* or *End*. When the toggle button for the point type is activated, the user can click on the map. This adds the Lat/Lon coordinates as hash property to the URL anchor and looks like this:
+The standard [OpenStreetMap](http://www.openstreetmap.org) map is displyed and the user can click on the map. The user can select if he wants to add a point of the type *Start* or *End*. When the toggle button for the point type is activated, the user can click on the map. This adds the Lat/Lon coordinates as hash property to the URL anchor and looks like this:
 
     <URL>/index.html#start=11.57557,48.13717
 
