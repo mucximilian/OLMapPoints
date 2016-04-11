@@ -8,11 +8,9 @@ See [here](http://www.w3schools.com/jsref/obj_location.asp) for more information
 
 ## How it works
 
-The application page **index.html** can be accessed from the web browser:
+See [http://mucximilian.github.io/OLMapPoints/] for the demo page of this project.
 
-    <URL>/index.html
-
-The standard [OpenStreetMap](http://www.openstreetmap.org) map is displyed and the user can click on the map. The user can select if he wants to add a point of the type *Start* or *End*. When the toggle button for the point type is activated, the user can click on the map. This adds the Lat/Lon coordinates as hash property to the URL anchor and looks like this:
+The application page **index.html** is be accessed via a web browser. The standard [OpenStreetMap](http://www.penstreetmap.org) Mapnik layer is displyed and the user can click on the map. Using the buttons in the upper left, the user can select if he wants to add a point of type *Start* or *End*. When the toggle button for the point type is activated, the user can click on the map. This adds the Lat/Lon coordinates as hash property to the URL anchor and looks like this:
 
     <URL>/index.html#start=11.57557,48.13717
 
