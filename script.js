@@ -140,7 +140,7 @@ var hash_object = {
     // Transforms and combines the coordinates of a LatLon in a truncated string
     getLatLonString: function(point) {
 
-        point_string = get_latlon_string(point)
+        point_string = get_lonlat_string(point)
 
         return point_string;
     },
@@ -407,7 +407,9 @@ function center_map_to_points(points) {
 
     console.log("Centering map at " + center)
 
-    map.setCenter(center, map.getZoomForExtent(bounds, true) - 1);
+    zoom = map.getZoomForExtent(bounds, true) - 1
+
+    map.setCenter(center, zoom);
 
     return center;
 }
