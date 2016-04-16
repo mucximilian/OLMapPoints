@@ -3,14 +3,15 @@
  * 
  * TO DOs:
  * 
- * 
+ * - see Readme.md
  */
-
 
 // Some global variables
 var map;
 var click;
 var point_type;
+var zoom;
+var center;
 
 // Used projections
 var proj_wgs84 = new OpenLayers.Projection("EPSG:4326");
@@ -47,6 +48,12 @@ var btnReset = new OpenLayers.Control.Button({
     displayClass: "olControlBtn olControlBtnReset",
     trigger: reset_points,
     title: "Reset points"
+})
+
+var btnOpenOSM = new OpenLayers.Control.Button({
+    displayClass: "olControlBtn olControlBtnOpenOSM",
+    trigger: open_osm,
+    title: "Open OSM"
 })
 
 // Point style definitions
@@ -133,13 +140,7 @@ var hash_object = {
     // Transforms and combines the coordinates of a LatLon in a truncated string
     getLatLonString: function(point) {
 
-        lonlat = point.clone();
-        lonlat.transform(proj_sphmer, proj_wgs84);
-
-        lon = Number((lonlat.lon).toFixed(5));
-        lat = Number((lonlat.lat).toFixed(5));
-
-        point_string = [lon, lat].join(",");
+        point_string = get_latlon_string(point)
 
         return point_string;
     },
@@ -156,6 +157,25 @@ var hash_object = {
         //document.location = document.location.host;
     }
 };
+
+function get_lonlat(point) {
+	lonlat = point.clone();
+    lonlat.transform(proj_sphmer, proj_wgs84);
+
+    return lonlat;
+}
+
+function get_lonlat_string(point, sep=",", length=5) {
+
+	point = get_lonlat(point);
+
+    lon = Number((lonlat.lon).toFixed(length));
+    lat = Number((lonlat.lat).toFixed(length));
+
+    point_string = [lon, lat].join(sep);
+
+    return point_string;
+}
 
 ///////////////////////////////////////
 // Control functions
@@ -251,6 +271,15 @@ function reset_points() {
     }
 }
 
+function open_osm() {
+
+	var center_lonlat = get_lonlat(center)
+
+	var zoomlonlat = [zoom, center_lonlat.lat, center_lonlat.lon]
+
+	window.open("http://www.openstreetmap.org/#map=" + zoomlonlat.join("/"));
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Script starts here
 
@@ -264,9 +293,9 @@ function init_map() {
     // Set up map
     map = new OpenLayers.Map("map");
 
-    var position = new OpenLayers.LonLat(11.51, 48.12).transform(proj_wgs84,
+    var position = new OpenLayers.LonLat(11.51000, 48.12000).transform(proj_wgs84,
             proj_sphmer);
-    var zoom = 13;
+    zoom = 13;
 
     // Adding map layers for OSM background and vector geometry (points)
     var mapnik = new OpenLayers.Layer.OSM();
@@ -289,7 +318,8 @@ function init_map() {
         btnAddStart,
         btnAddEnd,
         btnCenter,
-        btnReset
+        btnReset,
+        btnOpenOSM
     ]);
     map.addControl(panel);
 
@@ -306,6 +336,8 @@ function init_map() {
     center_btn_div.innerHTML = "Center";
     var reset_btn_div = document.getElementsByClassName("olControlBtn olControlBtnResetItemInactive")[0];
     reset_btn_div.innerHTML = "Reset";
+    var openosm_btn_div = document.getElementsByClassName("olControlBtn olControlBtnOpenOSMItemInactive")[0];
+    openosm_btn_div.innerHTML = "Open OSM";
 
     // Check URL anchor for input points
     points = init_points();
@@ -315,6 +347,7 @@ function init_map() {
         console.log("Map center calculated from points");
     } else {
         map.setCenter(position, zoom);
+        center = position;
         console.log("No points available, map centered at " + position);
     }
 }
@@ -334,13 +367,13 @@ function init_points() {
     // Check if possible to update feature instead of creating and deleting it
     if (hash_object.start !== null) {
         points.push(hash_object.start);
-        addPointToLayer(hash_object.start, point_start, "Start");
+        add_point_to_layer(hash_object.start, point_start, "Start");
     } else {
         point_start.removeAllFeatures();
     }
     if (hash_object.end !== null) {
         points.push(hash_object.end);
-        addPointToLayer(hash_object.end, point_end, "End");
+        add_point_to_layer(hash_object.end, point_end, "End");
     } else {
         point_end.removeAllFeatures();
     }
@@ -348,7 +381,7 @@ function init_points() {
     return points;
 }
 
-function addPointToLayer(point, layer, name) {
+function add_point_to_layer(point, layer, name) {
 
     point_new = new OpenLayers.Geometry.Point(point.lon, point.lat);
 
@@ -375,6 +408,8 @@ function center_map_to_points(points) {
     console.log("Centering map at " + center)
 
     map.setCenter(center, map.getZoomForExtent(bounds, true) - 1);
+
+    return center;
 }
 
 function foo() {
